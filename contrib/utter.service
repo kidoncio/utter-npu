@@ -1,0 +1,16 @@
+# Template: install.sh replaces @ROOT@, @CONTAINER@ and @LANGUAGE@.
+[Unit]
+Description=Utter — local voice dictation (Whisper on the Intel NPU via OpenVINO)
+After=graphical-session.target
+
+[Service]
+Environment=UTTER_LANGUAGE=@LANGUAGE@
+ExecStart=/usr/bin/distrobox enter @CONTAINER@ -- @ROOT@/.venv/bin/python @ROOT@/utter/daemon.py
+# Stopping "distrobox enter" does not kill the process inside the container; kill it here.
+ExecStopPost=-/usr/bin/pkill -f @ROOT@/utter/daemon.py
+ExecStopPost=-/usr/bin/pkill -f @ROOT@/utter/pill.py
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

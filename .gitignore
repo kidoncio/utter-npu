@@ -1,0 +1,7 @@
+.venv/
+models/
+cache/
+.superpowers/
+.pytest_cache/
+__pycache__/
+*.wav

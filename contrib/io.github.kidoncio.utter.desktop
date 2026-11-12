@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Utter
+Comment=Voice dictation: record, transcribe on the NPU, copy to clipboard
+Exec=sh -c "$HOME/.local/bin/utter-toggle"
+Icon=audio-input-microphone
+NoDisplay=true
