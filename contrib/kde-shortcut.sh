@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Bind a KDE Plasma 6 global shortcut to Utter, live (no re-login needed).
 #   contrib/kde-shortcut.sh Meta+V
-# Supports Meta/Ctrl/Alt/Shift + one letter or digit. Refuses keys already taken.
+# Supports Meta/Ctrl/Alt/Shift + one letter, digit or F1–F35. Refuses keys already taken.
 set -euo pipefail
 keys=${1:?usage: $0 Meta+V}
 G="gdbus call --session --dest org.kde.kglobalaccel --object-path /kglobalaccel --method org.kde.KGlobalAccel"
@@ -16,6 +16,7 @@ for p in "${parts[@]}"; do
         alt) code=$((code | 0x08000000)) ;;
         shift) code=$((code | 0x02000000)) ;;
         [a-z0-9]) code=$((code | $(printf '%d' "'${p^^}"))) ;;
+        f[1-9]|f[1-2][0-9]|f3[0-5]) code=$((code | (0x01000030 + ${p:1} - 1))) ;;  # Qt::Key_F1..F35
         *) echo "unsupported key: $p" >&2; exit 2 ;;
     esac
 done

@@ -115,6 +115,13 @@ The installer is idempotent, so it is safe to re-run. It:
 9. with `--shortcut`, binds a KDE global shortcut. It refuses keys that are
    already taken. On Plasma, `Meta+V` usually opens the clipboard history, so
    either move that one in System Settings → Keyboard → Shortcuts or pick another key.
+   Keys are `Meta`/`Ctrl`/`Alt`/`Shift` plus one letter, digit or `F1`–`F35`.
+
+**Laptops with a Copilot key** (for example the Acer Predator Helios Neo 16 AI): the
+key sends `Meta+Shift+F23` and holds `Meta+Shift` while pressed. Use
+`--shortcut Meta+Shift+F23` for the key on its own, or `--shortcut Meta+Shift+V` for
+Copilot + V. Plasma may already use `Meta+Shift+V` for the clipboard popup at the
+mouse position. Free it first and keep that popup on `Meta+V`.
 
 Options: `--container NAME`, `--language CODE` (`en`, `pt`, … or `auto`; the default
 comes from `$LANG`), `--shortcut KEYS`, `--enable`. Run `./install.sh --help` for details.
