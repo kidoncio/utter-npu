@@ -30,4 +30,7 @@ if [[ $owner == *"'"* && $owner != *io.github.kidoncio.utter* ]]; then
 fi
 $G.doRegister "$ACTION" >/dev/null
 $G.setForeignShortcutKeys "$ACTION" "[([$code,0,0,0],)]" >/dev/null
+# A component registered from outside stays inactive (its keys are not grabbed)
+# until the next login. Marking the shortcut present (SetPresent = 2) activates it now.
+$G.setShortcutKeys "$ACTION" "[([$code,0,0,0],)]" "uint32 2" >/dev/null
 echo "Utter bound to $keys"

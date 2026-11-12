@@ -117,6 +117,7 @@ step "Installing service, toggle and launcher"
 install -Dm755 "$ROOT/contrib/utter-toggle" "$HOME/.local/bin/utter-toggle"
 install -Dm644 "$ROOT/contrib/io.github.kidoncio.utter.desktop" \
     "$HOME/.local/share/applications/io.github.kidoncio.utter.desktop"
+command -v kbuildsycoca6 >/dev/null && kbuildsycoca6 >/dev/null 2>&1 || true  # let KDE see the launcher
 mkdir -p "$HOME/.config/systemd/user"
 sed -e "s|@ROOT@|$ROOT|g" -e "s|@CONTAINER@|$CONTAINER|g" -e "s|@LANGUAGE@|$LANGUAGE|g" \
     "$ROOT/contrib/utter.service" | grep -v '^# Template' > "$HOME/.config/systemd/user/utter.service"

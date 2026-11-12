@@ -24,3 +24,13 @@ def test_simple_states_roundtrip():
 def test_garbage_line_decodes_to_none():
     assert decode("bogus 1 2 3\n") is None
     assert decode("rec not-a-number 1\n") is None
+
+
+def test_line_buffer_returns_every_complete_line():
+    # The pill must handle two messages that arrive together; a buffered
+    # readline() would keep the second one hidden from GLib.
+    from utter.protocol import LineBuffer
+    buf = LineBuffer()
+    assert buf.feed(b"wait\nfail Nada reconhe") == ["wait"]
+    assert buf.feed("cido\nhide\n".encode()) == ["fail Nada reconhecido", "hide"]
+    assert buf.feed(b"") == []

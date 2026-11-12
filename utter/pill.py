@@ -20,7 +20,7 @@ from gi.repository import Gtk4LayerShell as Layer  # noqa: E402
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from utter.i18n import strings_for  # noqa: E402
-from utter.protocol import Done, Failed, Hide, Recording, Waiting, decode  # noqa: E402
+from utter.protocol import Done, Failed, Hide, LineBuffer, Recording, Waiting, decode  # noqa: E402
 
 T = strings_for(os.environ)
 
@@ -45,6 +45,7 @@ class Pill(Gtk.Application):
     def __init__(self):
         super().__init__(application_id="io.github.kidoncio.UtterPill")
         self.levels = deque([0.0] * N_BARS, maxlen=N_BARS)
+        self.lines = LineBuffer()
 
     def do_activate(self):
         css = Gtk.CssProvider()
@@ -81,13 +82,14 @@ class Pill(Gtk.Application):
                           self._on_stdin)
 
     def _on_stdin(self, ch, cond):
-        line = sys.stdin.readline()
-        if not line:  # daemon closed the pipe
+        data = os.read(sys.stdin.fileno(), 4096)
+        if not data:  # daemon closed the pipe
             self.quit()
             return False
-        msg = decode(line)
-        if msg is not None:
-            self.show(msg)
+        for line in self.lines.feed(data):
+            msg = decode(line)
+            if msg is not None:
+                self.show(msg)
         return True
 
     def _style(self, css_class, icon, text, recording=False, spinning=False):

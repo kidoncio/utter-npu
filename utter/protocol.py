@@ -68,3 +68,15 @@ def decode(line: str) -> Message | None:
     except ValueError:
         return None
     return None
+
+
+class LineBuffer:
+    """Splits a byte stream into lines. The pill reads raw bytes, because a buffered
+    readline() would swallow a second waiting line without waking GLib again."""
+
+    def __init__(self):
+        self._pending = b""
+
+    def feed(self, data: bytes) -> list[str]:
+        *lines, self._pending = (self._pending + data).split(b"\n")
+        return [line.decode("utf-8", "replace") for line in lines]
