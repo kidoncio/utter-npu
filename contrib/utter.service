@@ -5,6 +5,16 @@ After=graphical-session.target
 
 [Service]
 Environment=UTTER_LANGUAGE=@LANGUAGE@
+# Start the container before the real ExecStart:
+#  - flock: distrobox-enter uses a fixed FIFO path per container while it waits for the
+#    container's setup, so two units that start the same container at once (at boot)
+#    break each other's FIFO and hang forever. The lock is per container and does not
+#    depend on any other app: with no other user of the container it is a no-op.
+#  - systemd-run --scope keeps the container's conmon out of this unit's cgroup, so
+#    stopping this unit does not stop the container under other apps that share it.
+#  - timeout is a safety net: a hang becomes a failure, and Restart=on-failure retries.
+TimeoutStartSec=150
+ExecStartPre=/usr/bin/systemd-run --user --scope --quiet --collect /usr/bin/flock %t/distrobox-@CONTAINER@.lock /usr/bin/timeout 120 /usr/bin/distrobox enter @CONTAINER@ -- true
 ExecStart=/usr/bin/distrobox enter @CONTAINER@ -- @ROOT@/.venv/bin/python @ROOT@/utter/daemon.py
 # Stopping "distrobox enter" does not kill the process inside the container; kill it here.
 ExecStopPost=-/usr/bin/pkill -f @ROOT@/utter/daemon.py
